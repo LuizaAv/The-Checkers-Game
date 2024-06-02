@@ -31,7 +31,7 @@ const Board = () => {
   const [whosTurn, setWhosTurn] = useState<string>(board.getWhosTurn())
   const [matrix, setMatrix] = useState<(FigureClass | Color.EMPTY_PLACE)[][]>(game.getBoardMatrix())
   const [moveHistory, setMoveHistory] = useState<HistoryItem[]>([])
-  
+
   useEffect(() => {
     if(clickedElemStringFirst){
       setFirstClickedPos(clickedPosition)
@@ -97,6 +97,8 @@ const Board = () => {
     game.undoMove(arg)
     setMoveHistory(previous => previous.slice(0, +arg ))
     setMatrix(game.getBoardMatrix())
+    setWhosTurn(game.board.getWhosTurn())
+    updateScore()
 
     // may be used
     // let currentBoard = game.getBoardHistory().getBoardHistory()
@@ -160,6 +162,9 @@ const Board = () => {
                           reachablePositions = {reachablePosition}
                           whosTurn = {whosTurn}
                           onFigureClickCb={handleFigureClicked}
+                          isClicked = {
+                            clickedPosition?.row === indexRow && clickedPosition?.column === indexColumn
+                          }
                         />
                       )
                     })}

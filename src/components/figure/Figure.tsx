@@ -3,7 +3,8 @@ import { FigureProps} from "./Figure.state";
 
 
 
-const Figure: React.FC<FigureProps> = ({ color, figureType, position, firstClickedPosition, onFigureClickCb , whosTurn, reachablePositions}) => {
+const Figure: React.FC<FigureProps> = ({ color, figureType, position, firstClickedPosition, onFigureClickCb , whosTurn, reachablePositions, isClicked}) => {
+
   const ref = useRef<HTMLDivElement>(null);
   
   const handleFigureClicked = () => {
@@ -23,7 +24,7 @@ const Figure: React.FC<FigureProps> = ({ color, figureType, position, firstClick
             ></div> : 
             (position.row + position.column) % 2 !== 0 ? (
               <div
-                className={`flex md:h-20 w-20 ${firstClickedPosition?.row === position.row && firstClickedPosition.column === position.column  && whosTurn !== "" && color ===  whosTurn ?  "bg-amber-400" : "bg-emerald-700"} justify-center items-center text-4xl rounded-md`}
+                className={`flex md:h-20 w-20 ${isClicked && whosTurn !== "" && color ===  whosTurn ?  "bg-amber-400" : "bg-emerald-700"} justify-center items-center text-4xl rounded-md`}
                 onClick={handleFigureClicked}
               >
                 {
