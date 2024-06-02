@@ -42,7 +42,6 @@ class Pawn extends Figure {
 			) {
 				let eatableFigureRow = this.reachablePositionsWithoutEating[reachableRow] + row;
 				let eatableFigureColumn = this.reachablePositionsWithoutEating[reachableColumn] + column;
-				debugger;
 				let figuresNewRow = this.reachablePositionsAfterEating[reachableRow] + row;
 				let figuresNewColumn = this.reachablePositionsAfterEating[reachableColumn] + column;
 
