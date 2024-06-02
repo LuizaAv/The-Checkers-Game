@@ -94,9 +94,9 @@ const Board = () => {
   }
 
   const handleHistoryTrack = (arg: string) => {
-    let result = game.undoMove(arg)
+    game.undoMove(arg)
+    setMoveHistory(previous => previous.slice(0, +arg ))
     setMatrix(game.getBoardMatrix())
-    console.log(result)
 
     // may be used
     // let currentBoard = game.getBoardHistory().getBoardHistory()

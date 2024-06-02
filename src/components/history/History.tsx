@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {HistoryItem} from "./History.state"
 
 type HistoryProps = {
@@ -14,7 +14,6 @@ const History: React.FC<HistoryProps> = ({moveHistory, historyTrack}) => {
         setSelectedValue(index)
         historyTrack(index)
     }
-    // console.log(selectedValueIndex)
 
     return (
         <select
