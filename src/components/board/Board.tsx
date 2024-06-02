@@ -84,13 +84,13 @@ const Board = () => {
   }
 
   const handleHistoryTrack = (arg: string) => {
-    // may be used
-    // let result = game.undoMove(arg)
-    // setMatrix(game.getBoardMatrix())
-    // console.log(result)
+    let result = game.undoMove(arg)
+    setMatrix(game.getBoardMatrix())
+    console.log(result)
 
-    let currentBoard = game.getBoardHistory().getBoardHistory()
-    setMatrix(currentBoard[+arg]);
+    // may be used
+    // let currentBoard = game.getBoardHistory().getBoardHistory()
+    // setMatrix(currentBoard[+arg]);
   }
 
 
