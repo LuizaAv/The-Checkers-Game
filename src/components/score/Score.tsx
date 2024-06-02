@@ -4,15 +4,15 @@ interface ScoreProps {
     score: ScoreState
 }
 
-const Score: React.FC<ScoreProps> = ({score}) => {
+const Score: React.FC <ScoreProps> = ({score}) => {
     return(
-        <div className="flex gap-3 text-emerald-700 font-medium">
+        <div className="flex font-medium text-emerald-700 gap-3">
             <div>
-                <h2>Whites</h2>
+                <h2>White</h2>
                 <span>{score?.white}</span>
             </div>
             <div>
-                <h2>Blacks</h2>
+                <h2>Black</h2>
                 <span>{score?.black}</span>
             </div>
         </div>
