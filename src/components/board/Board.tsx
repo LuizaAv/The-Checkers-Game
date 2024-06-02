@@ -140,6 +140,7 @@ const Board = () => {
     setWhosTurn(newGame.board.getWhosTurn())
     setMatrix(newGame.getBoardMatrix())
     setMoveHistory([])
+    setScore({white: 0, black: 0})
   }
 
   return (
