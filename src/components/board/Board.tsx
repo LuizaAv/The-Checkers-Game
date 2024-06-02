@@ -146,6 +146,10 @@ const Board = () => {
     setScore(updatedScore);
   };
 
+  const handleWinner = () => {
+    //must be handled
+  }
+
   const handleHistoryTrack = (arg: string) => {
     game.undoMove(arg);
     setMoveHistory((previous) => previous.slice(0, +arg));
