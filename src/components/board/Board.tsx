@@ -17,6 +17,7 @@ import { LETTERS } from "./Board.state"
 import { Position } from "../figure/Figure.state"
 import { HistoryItem } from "../history/History.state"
 import {ScoreState} from "../score/Score.state"
+import Popup from "../popup/Popup"
 
 
 const Board = () => {
@@ -31,6 +32,8 @@ const Board = () => {
   const [whosTurn, setWhosTurn] = useState<string>(board.getWhosTurn())
   const [matrix, setMatrix] = useState<(FigureClass | Color.EMPTY_PLACE)[][]>(game.getBoardMatrix())
   const [moveHistory, setMoveHistory] = useState<HistoryItem[]>([])
+  const [popupClick, setPopupClick] = useState<boolean>(false)
+  const [popupMessage, setPopupMessage] = useState<string>("")
 
   useEffect(() => {
     if(clickedElemStringFirst){
@@ -67,8 +70,9 @@ const Board = () => {
     let positionString = `${LETTERS[arg.column]}${matrix.length - arg.row}`
     let clickedFigure = matrix[arg.row][arg.column]
 
-    if(typeof matrix[arg.row][arg.column] !== "object"){
-      console.log("Invalid move")
+    if(typeof matrix[arg.row][arg.column] !== "object" && clickedElemStringFirst === ""){
+      setPopupMessage("Invalid position")
+      setPopupClick(true)
     }
     
     if(clickedElemStringFirst === ""){
@@ -78,19 +82,23 @@ const Board = () => {
         setFirstClickedPos(arg)
         setReachablePosition(game.pickAFigure(positionString))
       }else{      
-        console.log("Invalid move")
+        setPopupMessage("Invalid move")
+        setPopupClick(true)
         resetClick()
       }
     }else{
       if(clickedFigure instanceof FigureClass && clickedFigure.getColor() !== game.board.getWhosTurn()){
-        console.log("Invalid move")
+        setPopupMessage("Invalid move")
+        setPopupClick(true)
         resetClick()
       }else{
         if(reachablePosition && reachablePosition.some((item) => item.row === arg.row && item.column === arg.column)){
           setClickedElemStringSecond(positionString)
           setFirstClickedPos(arg)
         }else{
-          console.log("Move to an unreachable place")
+          setClickedPosition(null)
+          setPopupMessage("Move to an unreachable place")
+          setPopupClick(true)
           resetClick()
         }
       }
@@ -98,6 +106,10 @@ const Board = () => {
 
     setMatrix(game.getBoardMatrix())
     setClickedPosition(arg)
+  }
+
+  const popUpClick = (arg: boolean) => {
+    setPopupClick(arg)
   }
 
   const resetClick = () => {
@@ -145,6 +157,8 @@ const Board = () => {
 
   return (
     <div className="flex flex-col gap-5">
+      { popupMessage && popupClick ? <Popup handlePopupButtonClick={popUpClick} message={popupMessage} buttonName="Continue"/> :
+    <div className="flex flex-col gap-8">
       <div className="flex flex-row gap-5 ml-7">
         <Button name = "Reset" clickFn = {handleReset} />
         <History moveHistory = {moveHistory} historyTrack = {handleHistoryTrack} />
@@ -178,7 +192,6 @@ const Board = () => {
                             row: indexRow,
                             column: indexColumn,
                           }}
-                          firstClickedPosition = {firstClickedPos}
                           key={`${indexRow}-${indexColumn}`}
                           {...(typeof column === "object" ? column : {})}
                           figureType={figureType}
@@ -207,6 +220,8 @@ const Board = () => {
             ))}
           </div>
         </div>
+        </div>
+    }
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { FigureProps} from "./Figure.state";
 
 
 
-const Figure: React.FC<FigureProps> = ({ color, figureType, position, firstClickedPosition, onFigureClickCb , whosTurn, reachablePositions, isClicked}) => {
+const Figure: React.FC<FigureProps> = ({ color, figureType, position, onFigureClickCb , whosTurn, reachablePositions, isClicked}) => {
 
   const ref = useRef<HTMLDivElement>(null);
   
