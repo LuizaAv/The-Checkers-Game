@@ -65,24 +65,46 @@ const Board = () => {
 
   const handleFigureClicked = (arg: Position) => {
     let positionString = `${LETTERS[arg.column]}${matrix.length - arg.row}`
+    let clickedFigure = matrix[arg.row][arg.column]
 
-    //բացատների վրա քլիքի քեյս
-    if(typeof matrix[arg.row][arg.column] !== "object" && clickedElemStringFirst === "" ){
+    if(typeof matrix[arg.row][arg.column] !== "object"){
       console.log("Invalid move")
-    }else {
-      const clickedFigure = matrix[arg.row][arg.column]
+    }
+    
+    if(clickedElemStringFirst === ""){
+
       if(clickedFigure instanceof FigureClass && clickedFigure.getColor() === game.board.getWhosTurn()){
         setClickedElemStringFirst(positionString)
         setFirstClickedPos(arg)
         setReachablePosition(game.pickAFigure(positionString))
       }else{      
-        setClickedElemStringSecond(positionString)
-        setFirstClickedPos(arg)
+        console.log("Invalid move")
+        resetClick()
+      }
+    }else{
+      if(clickedFigure instanceof FigureClass && clickedFigure.getColor() !== game.board.getWhosTurn()){
+        console.log("Invalid move")
+        resetClick()
+      }else{
+        if(reachablePosition && reachablePosition.some((item) => item.row === arg.row && item.column === arg.column)){
+          setClickedElemStringSecond(positionString)
+          setFirstClickedPos(arg)
+        }else{
+          console.log("Move to an unreachable place")
+          resetClick()
+        }
       }
     }
 
     setMatrix(game.getBoardMatrix())
     setClickedPosition(arg)
+  }
+
+  const resetClick = () => {
+    setClickedElemStringFirst("")
+    setClickedElemStringSecond("")
+    setReachablePosition(null)
+    setClickedPosition(null)
   }
 
   const updateScore = () => {
