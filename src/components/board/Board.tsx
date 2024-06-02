@@ -11,6 +11,8 @@ import FigureClass from "../../lib/src/Figure"
 import { Color } from "../../lib/src/Constants"
 import Button from "../button/Button"
 import History from "../history/History"
+import { HistoryItem } from "../history/History.state"
+import HelpingFunctions from "../../lib/src/HelpingFunctions"
 
 
 
@@ -24,7 +26,8 @@ const Board = () => {
   const [game, setGame] = useState(new Game())
   const [whosTurn, setWhosTurn] = useState<string>(board.getWhosTurn())
   const [matrix, setMatrix] = useState<(FigureClass | Color.EMPTY_PLACE)[][]>(game.getBoardMatrix())
-  const [moveHistory, setMoveHistory] = useState<string[]>([])
+  const [moveHistory, setMoveHistory] = useState<HistoryItem[]>([])
+  const [historyIndex, setHistoryIndex] = useState<string>("")
   
 
   useEffect(() => {
@@ -40,21 +43,26 @@ const Board = () => {
   }, [clickedElemStringFirst])
 
   useEffect(() => {
-    if(clickedElemStringSecond){
+    if(clickedElemStringSecond && clickedElemStringFirst){
       let nextMove: boolean = game.makeTheNextMove(clickedElemStringSecond)
       if(nextMove){
+        const lastMove = {
+          step: `${clickedElemStringFirst} - ${clickedElemStringSecond}`,
+          moveIndex: (moveHistory.length + 1).toString(),
+          turn: whosTurn
+        }
+
+        setMoveHistory([...moveHistory, lastMove])
         setClickedElemStringFirst("")
         setClickedElemStringSecond("")
         setReachablePosition(null)
         setWhosTurn(game.board.getWhosTurn())
       }
     }
-  },[clickedElemStringSecond, matrix])
-
+  },[clickedElemStringFirst, clickedElemStringSecond, matrix])
 
   const handleFigureClicked = (arg: Position) => {
     let positionString = `${LETTERS[arg.column]}${matrix.length - arg.row}`
-    console.log(Figure instanceof Queen)
 
     //բացատների վրա քլիքի քեյս
     if(typeof matrix[arg.row][arg.column] !== "object" && clickedElemStringFirst === "" ){
@@ -75,6 +83,16 @@ const Board = () => {
     setClickedPosition(arg)
   }
 
+  const handleHistoryTrack = (arg: string) => {
+    // may be used
+    // let result = game.undoMove(arg)
+    // setMatrix(game.getBoardMatrix())
+    // console.log(result)
+
+    let currentBoard = game.getBoardHistory().getBoardHistory()
+    setMatrix(currentBoard[+arg]);
+  }
+
 
   const handleReset = () => {
     const newGame = new Game()
@@ -87,13 +105,14 @@ const Board = () => {
     setReachablePosition(null)
     setWhosTurn(newGame.board.getWhosTurn())
     setMatrix(newGame.getBoardMatrix())
+    setMoveHistory([])
   }
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-row gap-5">
+      <div className="flex flex-row gap-5 ml-7">
         <Button name = "Reset" clickFn = {handleReset} />
-        <History />
+        <History moveHistory = {moveHistory} historyTrack = {handleHistoryTrack} />
         <Turn turn = {whosTurn}/>
       </div>
      <div className="flex flex-col ">
