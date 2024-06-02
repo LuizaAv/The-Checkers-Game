@@ -1,19 +1,22 @@
 import { useEffect, useState } from "react"
+
 import InitialBoard from "../../lib/src/Board"
 import Pawn from "../../lib/src/Pawn"
 import Queen from "../../lib/src/Queen"
-import Figure from "../figure/Figure"
-import { LETTERS } from "./Board.state"
-import { Position } from "../figure/Figure.state"
 import Game from "../../lib/src/Game"
-import Turn from "../turn/Turn"
 import FigureClass from "../../lib/src/Figure"
 import { Color } from "../../lib/src/Constants"
+
+import Figure from "../figure/Figure"
+import Turn from "../turn/Turn"
 import Button from "../button/Button"
 import History from "../history/History"
-import { HistoryItem } from "../history/History.state"
-import HelpingFunctions from "../../lib/src/HelpingFunctions"
+import Score from "../score/Score"
 
+import { LETTERS } from "./Board.state"
+import { Position } from "../figure/Figure.state"
+import { HistoryItem } from "../history/History.state"
+import {ScoreState} from "../score/Score.state"
 
 
 const Board = () => {
@@ -24,14 +27,12 @@ const Board = () => {
   const [clickedElemStringSecond, setClickedElemStringSecond] = useState<string>("")
   const [reachablePosition, setReachablePosition] = useState<Position[] | null>(null)
   const [game, setGame] = useState(new Game())
+  const [score, setScore] = useState<ScoreState>({white: 0, black: 0})
   const [whosTurn, setWhosTurn] = useState<string>(board.getWhosTurn())
   const [matrix, setMatrix] = useState<(FigureClass | Color.EMPTY_PLACE)[][]>(game.getBoardMatrix())
   const [moveHistory, setMoveHistory] = useState<HistoryItem[]>([])
-  const [historyIndex, setHistoryIndex] = useState<string>("")
   
-
   useEffect(() => {
-
     if(clickedElemStringFirst){
       setFirstClickedPos(clickedPosition)
       let reachablePositionsArray: Position[] | null = game.pickAFigure(clickedElemStringFirst) 
@@ -57,6 +58,7 @@ const Board = () => {
         setClickedElemStringSecond("")
         setReachablePosition(null)
         setWhosTurn(game.board.getWhosTurn())
+        updateScore()
       }
     }
   },[clickedElemStringFirst, clickedElemStringSecond, matrix])
@@ -73,7 +75,7 @@ const Board = () => {
         setClickedElemStringFirst(positionString)
         setFirstClickedPos(arg)
         setReachablePosition(game.pickAFigure(positionString))
-      }else{
+      }else{      
         setClickedElemStringSecond(positionString)
         setFirstClickedPos(arg)
       }
@@ -81,6 +83,14 @@ const Board = () => {
 
     setMatrix(game.getBoardMatrix())
     setClickedPosition(arg)
+  }
+
+  const updateScore = () => {
+    let updatedScore = {
+      white: 12 - game.board.getBlackCounter(),
+      black: 12 - game.board.getWhiteCounter()
+    }
+    setScore(updatedScore)
   }
 
   const handleHistoryTrack = (arg: string) => {
@@ -113,6 +123,7 @@ const Board = () => {
       <div className="flex flex-row gap-5 ml-7">
         <Button name = "Reset" clickFn = {handleReset} />
         <History moveHistory = {moveHistory} historyTrack = {handleHistoryTrack} />
+        <Score score = {score}/>
         <Turn turn = {whosTurn}/>
       </div>
      <div className="flex flex-col ">
