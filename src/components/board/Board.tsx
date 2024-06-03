@@ -39,6 +39,7 @@ const Board = () => {
   const [moveHistory, setMoveHistory] = useState<HistoryItem[]>([]);
   const [popupClick, setPopupClick] = useState<boolean>(false);
   const [popupMessage, setPopupMessage] = useState<string>("");
+  const [winner, setWinner] = useState<string | null>("");
 
   useEffect(() => {
     if (clickedElemStringFirst) {
@@ -76,6 +77,8 @@ const Board = () => {
     let positionString = `${LETTERS[arg.column]}${matrix.length - arg.row}`;
     let clickedFigure = matrix[arg.row][arg.column];
 
+    handleWinner();
+
     if (
       typeof matrix[arg.row][arg.column] !== "object" &&
       clickedElemStringFirst === ""
@@ -105,6 +108,13 @@ const Board = () => {
         setPopupMessage("Invalid move");
         setPopupClick(true);
         resetClick();
+      } else if (
+        clickedFigure instanceof FigureClass &&
+        clickedFigure.getColor() === game.board.getWhosTurn()
+      ) {
+        setClickedElemStringFirst(positionString);
+        setClickedPosition({ row: arg.row, column: arg.column });
+        setReachablePosition(game.pickAFigure(positionString));
       } else {
         if (
           reachablePosition &&
@@ -147,18 +157,19 @@ const Board = () => {
   };
 
   const handleWinner = () => {
-    
-  }
+    if (game.whoWonTheGame()) {
+      setWinner(game.whoWonTheGame());
+      setPopupClick(true);
+      handleReset();
+    }
+  };
 
   const handleHistoryTrack = (arg: string) => {
-    // console.log(`reachable ${reachablePosition}`)
-    // console.log(`history ${game.getBoardHistory().getSteps() }`)
-    // console.log(`history ${game.getBoardHistory().getBoardHistory() }`)
     game.undoMove(arg);
     setMoveHistory((previous) => previous.slice(0, +arg));
     setMatrix(game.getBoardMatrix());
     setWhosTurn(game.board.getWhosTurn());
-    setClickedPosition(null)
+    setClickedPosition(null);
     updateScore();
 
     // may be used
@@ -183,83 +194,90 @@ const Board = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      {popupMessage && popupClick &&
+      {winner && popupClick && (
+        <Popup
+          handlePopupButtonClick={popUpClick}
+          message={`${winner === "w" ? "The Whites won the game" : "The Blacks won the game"}`}
+          buttonName="Ok"
+        />
+      )}
+      {popupMessage && popupClick && (
         <Popup
           handlePopupButtonClick={popUpClick}
           message={popupMessage}
           buttonName="Continue"
         />
-      }
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-row gap-5 ml-7">
-            <Button name="Reset" clickFn={handleReset} />
-            <History
-              moveHistory={moveHistory}
-              historyTrack={handleHistoryTrack}
-            />
-            <Score score={score} />
-            <Turn turn={whosTurn} />
-          </div>
-          <div className="flex flex-col ">
-            <div className="flex flex-row">
-              <div className="flex flex-col justify-end gap-12 mb-7 font-medium">
-                {Array.from({ length: matrix.length }, (item, index) => (
-                  <div
-                    key={index}
-                    className="h-8 flex items-center justify-center"
-                  >
-                    {matrix.length - index}
-                  </div>
-                ))}
-              </div>
-              <div className="border-emerald-700 border-4 rounded-xl ml-4">
-                {matrix.map((row, indexRow) => {
-                  return (
-                    <div key={indexRow} className="flex flex-row">
-                      {row.map((column, indexColumn) => {
-                        let figureType =
-                          matrix[indexRow][indexColumn] instanceof Pawn
-                            ? "pawn"
-                            : matrix[indexRow][indexColumn] instanceof Queen
-                              ? "queen"
-                              : "";
-                        return (
-                          <Figure
-                            color={""}
-                            position={{
-                              row: indexRow,
-                              column: indexColumn,
-                            }}
-                            key={`${indexRow}-${indexColumn}`}
-                            {...(typeof column === "object" ? column : {})}
-                            figureType={figureType}
-                            reachablePositions={reachablePosition}
-                            whosTurn={whosTurn}
-                            onFigureClickCb={handleFigureClicked}
-                            isClicked={
-                              clickedPosition?.row === indexRow &&
-                              clickedPosition?.column === indexColumn
-                            }
-                          />
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="flex flex-row justify-center mt-2 gap-12">
-              {LETTERS.map((letter, index) => (
+      )}
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-row gap-5 ml-7">
+          <Button name="Reset" clickFn={handleReset} />
+          <History
+            moveHistory={moveHistory}
+            historyTrack={handleHistoryTrack}
+          />
+          <Score score={score} />
+          <Turn turn={whosTurn} />
+        </div>
+        <div className="flex flex-col ">
+          <div className="flex flex-row">
+            <div className="flex flex-col justify-end gap-12 mb-7 font-medium">
+              {Array.from({ length: matrix.length }, (item, index) => (
                 <div
                   key={index}
-                  className="w-8 flex items-center justify-center font-medium"
+                  className="h-8 flex items-center justify-center"
                 >
-                  {letter}
+                  {matrix.length - index}
                 </div>
               ))}
             </div>
+            <div className="border-emerald-700 border-4 rounded-xl ml-4">
+              {matrix.map((row, indexRow) => {
+                return (
+                  <div key={indexRow} className="flex flex-row">
+                    {row.map((column, indexColumn) => {
+                      let figureType =
+                        matrix[indexRow][indexColumn] instanceof Pawn
+                          ? "pawn"
+                          : matrix[indexRow][indexColumn] instanceof Queen
+                            ? "queen"
+                            : "";
+                      return (
+                        <Figure
+                          color={""}
+                          position={{
+                            row: indexRow,
+                            column: indexColumn,
+                          }}
+                          key={`${indexRow}-${indexColumn}`}
+                          {...(typeof column === "object" ? column : {})}
+                          figureType={figureType}
+                          reachablePositions={reachablePosition}
+                          whosTurn={whosTurn}
+                          onFigureClickCb={handleFigureClicked}
+                          isClicked={
+                            clickedPosition?.row === indexRow &&
+                            clickedPosition?.column === indexColumn
+                          }
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-row justify-center mt-2 gap-12">
+            {LETTERS.map((letter, index) => (
+              <div
+                key={index}
+                className="w-8 flex items-center justify-center font-medium"
+              >
+                {letter}
+              </div>
+            ))}
           </div>
         </div>
+      </div>
     </div>
   );
 };
