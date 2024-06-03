@@ -168,7 +168,7 @@ const Board = () => {
     game.undoMove(arg);
     setMoveHistory((previous) => previous.slice(0, +arg));
     setMatrix(game.getBoardMatrix());
-    setWhosTurn(game.board.getWhosTurn());
+    setWhosTurn(moveHistory[+arg].turn);
     setClickedPosition(null);
     updateScore();
 
