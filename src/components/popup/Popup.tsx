@@ -9,7 +9,7 @@ const Popup: React.FC<PopupProps> = ({ handlePopupButtonClick, message, buttonNa
   };
 
   return (
-    <div className="flex flex-col text-center bg-slate-100 border-2 border-emerald-700 max-w-lg sm:p-8 md:p-10 lg:p-12 rounded-lg">
+    <div className="flex flex-col text-center bg-slate-100 border-2 border-emerald-700 max-w-lg sm:p-8 md:p-10 lg:p-12 rounded-lg absolute left-50 right-50">
       <h1 className="text-xl md:text-xl lg:text-2xl font-bold mb-4 text-emerald-700 text-center">
         {message}
       </h1>

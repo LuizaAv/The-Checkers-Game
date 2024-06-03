@@ -147,7 +147,7 @@ const Board = () => {
   };
 
   const handleWinner = () => {
-    //must be handled
+    
   }
 
   const handleHistoryTrack = (arg: string) => {
@@ -158,6 +158,7 @@ const Board = () => {
     setMoveHistory((previous) => previous.slice(0, +arg));
     setMatrix(game.getBoardMatrix());
     setWhosTurn(game.board.getWhosTurn());
+    setClickedPosition(null)
     updateScore();
 
     // may be used
@@ -182,13 +183,13 @@ const Board = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      {popupMessage && popupClick ? (
+      {popupMessage && popupClick &&
         <Popup
           handlePopupButtonClick={popUpClick}
           message={popupMessage}
           buttonName="Continue"
         />
-      ) : (
+      }
         <div className="flex flex-col gap-8">
           <div className="flex flex-row gap-5 ml-7">
             <Button name="Reset" clickFn={handleReset} />
@@ -259,7 +260,6 @@ const Board = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };
