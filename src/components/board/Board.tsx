@@ -151,6 +151,9 @@ const Board = () => {
   }
 
   const handleHistoryTrack = (arg: string) => {
+    // console.log(`reachable ${reachablePosition}`)
+    // console.log(`history ${game.getBoardHistory().getSteps() }`)
+    // console.log(`history ${game.getBoardHistory().getBoardHistory() }`)
     game.undoMove(arg);
     setMoveHistory((previous) => previous.slice(0, +arg));
     setMatrix(game.getBoardMatrix());

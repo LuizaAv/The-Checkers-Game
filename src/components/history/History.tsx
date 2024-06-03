@@ -10,7 +10,8 @@ const History: React.FC<HistoryProps> = ({moveHistory, historyTrack}) => {
     const [selectedValueIndex, setSelectedValue] = useState<string>("")
 
     const handleSelectedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        let index = e.target.value !== "Move to a step" ? (+e.target.value[0] - 1) + "" : ""
+        let index = e.target.value !== "Move to a step" ? (typeof +e.target.value[1] === "number" ? +e.target.value.slice(0,2) - 1 : +e.target.value[0] - 1) + "" : ""
+        console.log(index)
         setSelectedValue(index)
         historyTrack(index)
     }
