@@ -2,6 +2,7 @@ import Board from "./components/board/Board";
 import Popup from "./components/popup/Popup";
 import { useState } from "react";
 
+
 function App() {
   const [start, setStart] = useState<boolean>(false)
   
