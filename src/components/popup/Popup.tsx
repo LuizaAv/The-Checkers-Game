@@ -8,7 +8,6 @@ const Popup: React.FC<PopupProps> = ({ handlePopupButtonClick, message, buttonNa
     handlePopupButtonClick(false);
   };
 
-  
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="flex flex-col text-center bg-slate-100 border-2 border-emerald-700 max-w-lg p-8 md:p-10 lg:p-12 rounded-lg">
