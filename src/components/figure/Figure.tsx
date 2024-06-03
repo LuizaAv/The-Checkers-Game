@@ -3,7 +3,7 @@ import { FigureProps} from "./Figure.state";
 
 
 
-const Figure: React.FC<FigureProps> = ({ color, figureType, position, onFigureClickCb , whosTurn, reachablePositions, isClicked}) => {
+const Figure: React.FC<FigureProps> = ({ color, figureType, position, onFigureClickCb , whosTurn, reachablePositions, isClicked, validMoves}) => {
 
   const ref = useRef<HTMLDivElement>(null);
   
@@ -22,6 +22,17 @@ const Figure: React.FC<FigureProps> = ({ color, figureType, position, onFigureCl
             <div className="flex bg-red-400 md:h-20 w-20 justify-center items-center text-4xl rounded-md"
               onClick={handleFigureClicked}
             ></div> : 
+            // (validMoves && validMoves.length > 0 && !isClicked) ? 
+            //   {
+            //     validMoves.map((item, index) => {
+            //       if(item.row === position.row && item.column === position.column){
+            //         <div className="flex bg-green-800 md:h-20 w-20 justify-center items-center text-4xl rounded-md"
+            //           onClick={handleFigureClicked}
+            //         ></div> 
+            //       }
+            //     })
+            //   }
+            // : 
             (position.row + position.column) % 2 !== 0 ? (
               <div
                 className={`flex md:h-20 w-20 ${isClicked && whosTurn !== "" && color ===  whosTurn ?  "bg-amber-400" : "bg-emerald-700"} justify-center items-center text-4xl rounded-md`}

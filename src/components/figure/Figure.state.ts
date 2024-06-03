@@ -10,6 +10,7 @@ export type FigureProps = {
   reachablePositions: Position[] | null;
   whosTurn: string;
   onFigureClickCb: (position: Position) => void;
-  isClicked: boolean
+  isClicked: boolean;
+  validMoves: Position[] | null
 };
 

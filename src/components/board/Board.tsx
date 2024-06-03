@@ -40,6 +40,7 @@ const Board = () => {
   const [popupClick, setPopupClick] = useState<boolean>(false);
   const [popupMessage, setPopupMessage] = useState<string>("");
   const [winner, setWinner] = useState<string | null>("");
+  const [validMoves, setValidMoves] = useState<Position[] | null>([])
 
   useEffect(() => {
     if (clickedElemStringFirst) {
@@ -51,6 +52,8 @@ const Board = () => {
         setReachablePosition(reachablePositionsArray);
       }
     }
+    hasValidMove()
+    
   }, [clickedElemStringFirst]);
 
   useEffect(() => {
@@ -78,6 +81,7 @@ const Board = () => {
     let clickedFigure = matrix[arg.row][arg.column];
 
     handleWinner();
+    hasValidMove()
 
     if (
       typeof matrix[arg.row][arg.column] !== "object" &&
@@ -177,6 +181,26 @@ const Board = () => {
     // setMatrix(currentBoard[+arg]);
   };
 
+  const hasValidMove = () => {
+    let validMove:Position[] | null  = []
+
+    matrix.map((item, indexRow) => {
+      item.map((item, indexColumn) => {
+        let reachablePositionsArray: Position[] | null
+        let positionString = `${LETTERS[indexColumn]}${matrix.length - indexRow}`
+
+        if(typeof item === "object" && item.getColor() === whosTurn){
+          reachablePositionsArray = game.pickAFigure(positionString)
+          if(reachablePositionsArray !== null && reachablePositionsArray .length > 0){
+            validMove !== null && validMove.push(item.getCurrentPosition())
+          }
+          // console.log(validMove)
+        }
+      })
+      setValidMoves(validMove)
+    })
+  }
+
   const handleReset = () => {
     const newGame = new Game();
     setGame(newGame);
@@ -258,6 +282,7 @@ const Board = () => {
                             clickedPosition?.row === indexRow &&
                             clickedPosition?.column === indexColumn
                           }
+                          validMoves = {validMoves}
                         />
                       );
                     })}
