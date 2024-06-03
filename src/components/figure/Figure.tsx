@@ -40,9 +40,9 @@ const Figure: React.FC<FigureProps> = ({ color, figureType, position, onFigureCl
               >
                 {
                   color === "w" && figureType === "pawn" ? <> ⚪ </> :
-                  color === "w" && figureType === "queen" ? <> 🔳 </> :
+                  color === "w" && figureType === "queen" ? <div className="text-5xl"> ♛ </div> :
                   color === "b" && figureType === "pawn" ? <> ⚫  </> :
-                  color === "b" && figureType === "queen" ? <> 🔲 </> :
+                  color === "b" && figureType === "queen" ? <div className="text-5xl"> ♛ </div> :
                   <></>
                 }
               </div>
