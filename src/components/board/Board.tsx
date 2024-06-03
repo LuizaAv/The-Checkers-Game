@@ -52,7 +52,7 @@ const Board = () => {
         setReachablePosition(reachablePositionsArray);
       }
     }
-    hasValidMove()
+    // hasValidMove()
     
   }, [clickedElemStringFirst]);
 
@@ -81,7 +81,7 @@ const Board = () => {
     let clickedFigure = matrix[arg.row][arg.column];
 
     handleWinner();
-    hasValidMove()
+    // hasValidMove()
 
     if (
       typeof matrix[arg.row][arg.column] !== "object" &&
