@@ -1,12 +1,16 @@
 import React from "react";
 import Button from "../button/Button";
 
-import { PopupProps } from "./Popup.state";
+import usePopupState, { PopupProps } from "./Popup.state";
 
-const Popup: React.FC<PopupProps> = ({ handlePopupButtonClick, message, buttonName}) => {
-  const handleBtnClick = () => {
-    handlePopupButtonClick(false);
-  };
+const Popup: React.FC<PopupProps> = ({
+  handlePopupButtonClick,
+  message,
+  buttonName,
+}) => {
+  const {handleBtnClick} = usePopupState({
+    handlePopupButtonClick
+  });
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -15,7 +19,7 @@ const Popup: React.FC<PopupProps> = ({ handlePopupButtonClick, message, buttonNa
           {message}
         </h1>
         <div className="flex m-auto mt-10">
-          <Button name = {buttonName} clickFn={handleBtnClick} />
+          <Button name={buttonName} clickFn={handleBtnClick} />
         </div>
       </div>
     </div>

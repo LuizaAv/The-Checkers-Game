@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { FigureProps } from "./Figure.state";
+import useFigureState from "./Figure.state";
 
 import white from "../../assets/white.svg";
 import black from "../../assets/black.svg";
@@ -14,18 +14,17 @@ const Figure: React.FC<FigureProps> = ({
   isClicked,
   validMoves,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const handleFigureClicked = () => {
-    onFigureClickCb(position);
-  };
-
-  const isReachable = reachablePositions?.some(
-    (pos) => pos.row === position.row && pos.column === position.column
-  );
-
-  const isValidMove = validMoves?.some(
-    (move) => move.row === position.row && move.column === position.column
+  const { ref, handleFigureClicked, isReachable, isValidMove } = useFigureState(
+    {
+      color,
+      figureType,
+      position,
+      onFigureClickCb,
+      whosTurn,
+      reachablePositions,
+      isClicked,
+      validMoves,
+    }
   );
 
   return (
@@ -38,12 +37,18 @@ const Figure: React.FC<FigureProps> = ({
         ></div>
       ) : (position.row + position.column) % 2 !== 0 ? (
         <div
-          className={`flex md:h-20 w-20 ${isValidMove && !isClicked ? "bg-red-400" : isClicked && whosTurn !== "" && color === whosTurn ? "bg-amber-400" : "bg-amber-900"} justify-center items-center text-4xl rounded-md`}
+          className={`flex md:h-20 w-20 ${
+            isValidMove && !isClicked
+              ? "bg-red-400"
+              : isClicked && whosTurn !== "" && color === whosTurn
+                ? "bg-amber-400"
+                : "bg-amber-900"
+          } justify-center items-center text-4xl rounded-md`}
           onClick={handleFigureClicked}
           style={{ transition: "0.5s ease-out", cursor: "pointer" }}
         >
           {color === "w" && figureType === "pawn" ? (
-              <div> ⚪ </div> 
+            <div> ⚪ </div>
           ) : color === "w" && figureType === "queen" ? (
             <div className="h-10 w-10">
               {" "}
@@ -54,7 +59,7 @@ const Figure: React.FC<FigureProps> = ({
               />{" "}
             </div>
           ) : color === "b" && figureType === "pawn" ? (
-            <div> ⚫ </div> 
+            <div> ⚫ </div>
           ) : color === "b" && figureType === "queen" ? (
             <div className="h-10 w-10">
               {" "}
