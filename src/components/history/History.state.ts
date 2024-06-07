@@ -2,7 +2,7 @@
 export type HistoryItem = {
     step: string,
     moveIndex: string,
-    turn: string
+    turn: string,
 }
 
 

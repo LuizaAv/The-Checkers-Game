@@ -6,7 +6,7 @@ interface ScoreProps {
 
 const Score: React.FC <ScoreProps> = ({score}) => {
     return(
-        <div className="flex font-medium text-emerald-700 gap-3">
+        <div className="flex font-medium text-amber-950 gap-3">
             <div>
                 <h2>White</h2>
                 <span>{score?.white}</span>

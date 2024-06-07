@@ -40,7 +40,11 @@ const Board = () => {
   const [popupClick, setPopupClick] = useState<boolean>(false);
   const [popupMessage, setPopupMessage] = useState<string>("");
   const [winner, setWinner] = useState<string | null>("");
-  const [validMoves, setValidMoves] = useState<Position[] | null>([])
+  const [validMoves, setValidMoves] = useState<Position[] | null>([]);
+
+  useEffect(() => {
+    hasValidMove();
+  }, [whosTurn, matrix]);
 
   useEffect(() => {
     if (clickedElemStringFirst) {
@@ -52,8 +56,6 @@ const Board = () => {
         setReachablePosition(reachablePositionsArray);
       }
     }
-    // hasValidMove()
-    
   }, [clickedElemStringFirst]);
 
   useEffect(() => {
@@ -72,6 +74,7 @@ const Board = () => {
         setReachablePosition(null);
         setWhosTurn(game.board.getWhosTurn());
         updateScore();
+        handleWinner();
       }
     }
   }, [clickedElemStringFirst, clickedElemStringSecond, matrix]);
@@ -81,15 +84,6 @@ const Board = () => {
     let clickedFigure = matrix[arg.row][arg.column];
 
     handleWinner();
-    // hasValidMove()
-
-    if (
-      typeof matrix[arg.row][arg.column] !== "object" &&
-      clickedElemStringFirst === ""
-    ) {
-      setPopupMessage("Invalid position");
-      setPopupClick(true);
-    }
 
     if (clickedElemStringFirst === "") {
       if (
@@ -100,7 +94,9 @@ const Board = () => {
         setFirstClickedPos(arg);
         setReachablePosition(game.pickAFigure(positionString));
       } else {
-        setPopupMessage("Invalid move");
+        if (winner === "") {
+          setPopupMessage("Invalid step");
+        }
         setPopupClick(true);
         resetClick();
       }
@@ -109,7 +105,9 @@ const Board = () => {
         clickedFigure instanceof FigureClass &&
         clickedFigure.getColor() !== game.board.getWhosTurn()
       ) {
-        setPopupMessage("Invalid move");
+        if (!winner) {
+          setPopupMessage("Your are trying to reach a non-empty position");
+        }
         setPopupClick(true);
         resetClick();
       } else if (
@@ -143,6 +141,7 @@ const Board = () => {
 
   const popUpClick = (arg: boolean) => {
     setPopupClick(arg);
+    setPopupMessage("");
   };
 
   const resetClick = () => {
@@ -161,45 +160,53 @@ const Board = () => {
   };
 
   const handleWinner = () => {
-    if (game.whoWonTheGame()) {
-      setWinner(game.whoWonTheGame());
+    if (game.whoWonTheGame() || validMoves?.length === 0) {
+      setWinner(() => game.whoWonTheGame());
+      setPopupMessage(
+        `${whosTurn === "b" ? "Black's " : whosTurn === "w" ? "White's " : ""} won the game`
+      );
       setPopupClick(true);
       handleReset();
     }
   };
 
-  const handleHistoryTrack = (arg: string) => {
+  const handleHistoryTrack = (arg: string, selectedElem: string) => {
     game.undoMove(arg);
+    hasValidMove();
     setMoveHistory((previous) => previous.slice(0, +arg));
     setMatrix(game.getBoardMatrix());
-    setWhosTurn(moveHistory[+arg].turn);
     setClickedPosition(null);
     updateScore();
 
-    // may be used
-    // let currentBoard = game.getBoardHistory().getBoardHistory()
-    // setMatrix(currentBoard[+arg]);
+    if (+arg === 0) {
+      handleReset();
+    } else {
+      setWhosTurn(() => moveHistory[+arg].turn);
+    }
+    hasValidMove();
   };
 
   const hasValidMove = () => {
-    let validMove:Position[] | null  = []
+    let validMove: Position[] | null = [];
 
     matrix.map((item, indexRow) => {
       item.map((item, indexColumn) => {
-        let reachablePositionsArray: Position[] | null
-        let positionString = `${LETTERS[indexColumn]}${matrix.length - indexRow}`
+        let reachablePositionsArray: Position[] | null;
+        let positionString = `${LETTERS[indexColumn]}${matrix.length - indexRow}`;
 
-        if(typeof item === "object" && item.getColor() === whosTurn){
-          reachablePositionsArray = game.pickAFigure(positionString)
-          if(reachablePositionsArray !== null && reachablePositionsArray .length > 0){
-            validMove !== null && validMove.push(item.getCurrentPosition())
+        if (typeof item === "object" && item.getColor() === whosTurn) {
+          reachablePositionsArray = game.pickAFigure(positionString);
+          if (
+            reachablePositionsArray !== null &&
+            reachablePositionsArray.length > 0
+          ) {
+            validMove !== null && validMove.push(item.getCurrentPosition());
           }
-          // console.log(validMove)
         }
-      })
-      setValidMoves(validMove)
-    })
-  }
+      });
+      setValidMoves(validMove);
+    });
+  };
 
   const handleReset = () => {
     const newGame = new Game();
@@ -237,6 +244,7 @@ const Board = () => {
           <Button name="Reset" clickFn={handleReset} />
           <History
             moveHistory={moveHistory}
+            whosTurn={whosTurn}
             historyTrack={handleHistoryTrack}
           />
           <Score score={score} />
@@ -254,7 +262,7 @@ const Board = () => {
                 </div>
               ))}
             </div>
-            <div className="border-emerald-700 border-4 rounded-xl ml-4">
+            <div className="border-amber-900 border-4 rounded-xl ml-4">
               {matrix.map((row, indexRow) => {
                 return (
                   <div key={indexRow} className="flex flex-row">
@@ -282,7 +290,7 @@ const Board = () => {
                             clickedPosition?.row === indexRow &&
                             clickedPosition?.column === indexColumn
                           }
-                          validMoves = {validMoves}
+                          validMoves={validMoves}
                         />
                       );
                     })}
