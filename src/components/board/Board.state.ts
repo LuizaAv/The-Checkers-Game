@@ -49,7 +49,11 @@ const useBoardState = () => {
 
   useEffect(() => {
     hasValidMove();
-  }, [whosTurn, matrix]);
+
+    if(winner){
+      handleReset()
+    }
+  }, [whosTurn, matrix, winner]);
 
   useEffect(() => {
     if (clickedElemStringFirst) {
@@ -60,6 +64,7 @@ const useBoardState = () => {
         setReachablePosition(reachablePositionsArray);
       }
     }
+
   }, [clickedElemStringFirst]);
 
   useEffect(() => {
@@ -87,7 +92,7 @@ const useBoardState = () => {
     let positionString = `${LETTERS[arg.column]}${matrix.length - arg.row}`;
     let clickedFigure = matrix[arg.row][arg.column];
 
-    handleWinner();
+    handleWinner()
 
     if (clickedElemStringFirst === "") {
       if (
@@ -162,14 +167,27 @@ const useBoardState = () => {
   };
 
   const handleWinner = () => {
-    if (game.whoWonTheGame() || validMoves?.length === 0) {
-      setWinner(() => game.whoWonTheGame());
-      setPopupMessage(
-        `${whosTurn === "b" ? "Black's " : whosTurn === "w" ? "White's " : ""} won the game`
-      );
-      setPopupClick(true);
-      handleReset();
-    }
+    const winner = (() => game.whoWonTheGame())()
+
+    setWinner(winner);
+
+      if (winner) {
+        setPopupMessage(
+          `${whosTurn === "b" ? "Black's " : whosTurn === "w" ? "White's " : ""} won the game`
+        );
+        handleReset()
+        setPopupClick(true);
+      }else if (validMoves?.length === 0){
+        if(score.white > score.black){
+          setPopupMessage("White's won the game")
+          handleReset()
+          setPopupClick(true);
+        }else if(score.white < score.black){
+          setPopupMessage("Black's won the game")
+          handleReset()
+          setPopupClick(true);
+        }
+      }
   };
 
   const handleHistoryTrack = (arg: string, selectedElem: string) => {

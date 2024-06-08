@@ -13,7 +13,7 @@ function App() {
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
               <div className="h-6 w-6 bg-red-400"></div>
-              <div>The possible steps player can do</div>
+              <div>The possible figures current player can move</div>
             </div>
             <div className="flex gap-2">
               <div className="h-6 w-6 bg-lime-700"></div>
